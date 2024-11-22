@@ -1,0 +1,12 @@
+[project]
+name = "yt-comment-sentiment"
+version = "0.1.0"
+description = "end-to-end project to build ML model to predict sentiment of youtube video comments"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "loguru>=0.7.2",
+    "nltk>=3.9.1",
+    "polars>=1.14.0",
+    "scikit-learn>=1.5.2",
+]

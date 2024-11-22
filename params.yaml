@@ -1,0 +1,32 @@
+dataset:
+  url: https://raw.githubusercontent.com/Himanshu-1703/reddit-sentiment-analysis/refs/heads/main/data/reddit.csv
+  rename_columns:
+    clean_comment: text
+    category: target
+  train_size: 0.75
+
+ingestion:
+  processed_train_path: data/processed/train.parquet
+  processed_test_path: data/processed/test.parquet
+
+building:
+  vectorizer:
+    module: sklearn.feature_extraction.text
+    name: TfidfVectorizer
+    path: models/vectorizer.pkl
+    params:
+      max_features: 10000
+      ngram_range: [1, 3]
+
+  model:
+    module: sklearn.ensemble
+    name: RandomForestClassifier
+    path: models/classifier.pkl
+    params:
+      n_estimators: 500
+      max_depth: 12
+      min_samples_leaf: 10
+      min_impurity_decrease: 0.1
+
+evaluation:
+  train_vec_path: models/train_vec_data.pkl
