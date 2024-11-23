@@ -9,7 +9,7 @@ import joblib
 import polars as pl
 from loguru import logger
 
-from ml.params import params
+from src.params import params
 
 if TYPE_CHECKING:
     import numpy as np

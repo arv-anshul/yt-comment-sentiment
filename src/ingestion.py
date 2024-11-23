@@ -7,7 +7,7 @@ import polars as pl
 from loguru import logger
 from nltk.corpus import stopwords as nltk_stopwords
 
-from ml.params import params
+from src.params import params
 
 # download nltk essentials
 nltk.download("punkt")
