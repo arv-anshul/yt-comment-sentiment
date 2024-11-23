@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# MacOS files
+.DS_Store
+
 # Custom ignore by arv-anshul
 *.arv
 *.arv.*
