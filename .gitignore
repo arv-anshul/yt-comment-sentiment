@@ -21,3 +21,4 @@ arv.*
 **/data/
 **/models/
 **/mlruns/
+mlflow_run_info.json

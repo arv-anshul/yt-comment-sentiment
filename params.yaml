@@ -4,6 +4,7 @@ dataset:
     clean_comment: text
     category: target
   train_size: 0.75
+  target_labels: [neg, neu, pos]
 
 ingestion:
   processed_train_path: data/processed/train.parquet
@@ -23,10 +24,15 @@ building:
     name: RandomForestClassifier
     path: models/classifier.pkl
     params:
-      n_estimators: 500
-      max_depth: 12
-      min_samples_leaf: 10
-      min_impurity_decrease: 0.1
+      n_estimators: 800
+      max_depth: 15
+      min_samples_leaf: 30
 
 evaluation:
   train_vec_path: models/train_vec_data.pkl
+
+mlflow:
+  # For local run: mlflow will store artifacts in this directory
+  # For cloud run: specify URL below
+  tracking_uri: ./mlruns
+  experiment_name: exp1-arv-testing

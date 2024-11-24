@@ -11,3 +11,6 @@ dependencies = [
     "pyyaml>=6.0.2",
     "scikit-learn>=1.5.2",
 ]
+
+[project.optional-dependencies]
+mlflow = ["mlflow>=2.18.0", "pip>=24.3.1", "seaborn>=0.13.2"]
