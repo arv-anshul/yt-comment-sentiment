@@ -16,17 +16,13 @@ building:
     name: TfidfVectorizer
     path: models/vectorizer.pkl
     params:
-      max_features: 10000
-      ngram_range: [1, 3]
+      max_features: 5000
 
   model:
     module: sklearn.ensemble
-    name: RandomForestClassifier
+    name: HistGradientBoostingClassifier
     path: models/classifier.pkl
-    params:
-      n_estimators: 800
-      max_depth: 15
-      min_samples_leaf: 30
+    params: {}
 
 evaluation:
   train_vec_path: models/train_vec_data.pkl

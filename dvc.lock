@@ -1,0 +1,101 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python -m src.ingestion
+    deps:
+    - path: src/ingestion.py
+      hash: md5
+      md5: a0982c9104c7c38ac4a7617938fe11e6
+      size: 3119
+    params:
+      params.yaml:
+        dataset:
+          url: 
+            https://raw.githubusercontent.com/Himanshu-1703/reddit-sentiment-analysis/refs/heads/main/data/reddit.csv
+          rename_columns:
+            clean_comment: text
+            category: target
+          train_size: 0.75
+          target_labels:
+          - neg
+          - neu
+          - pos
+        ingestion:
+          processed_train_path: data/processed/train.parquet
+          processed_test_path: data/processed/test.parquet
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 4ab8cca8cea730ab645deeb487c81b2c
+      size: 679129
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: bc7903299fcba93328b62281d5b875cc
+      size: 1982976
+  model_building:
+    cmd: python -m src.building
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: bc7903299fcba93328b62281d5b875cc
+      size: 1982976
+    - path: src/building.py
+      hash: md5
+      md5: b478c8af7dad0ed13a97195d6fda71cc
+      size: 2878
+    params:
+      params.yaml:
+        building.model:
+          module: sklearn.ensemble
+          name: HistGradientBoostingClassifier
+          path: models/classifier.pkl
+          params:
+            learning_rate: 0.5
+            max_depth: 10
+            min_samples_leaf: 20
+        building.vectorizer:
+          module: sklearn.feature_extraction.text
+          name: TfidfVectorizer
+          path: models/vectorizer.pkl
+          params:
+            max_features: 5000
+    outs:
+    - path: models/classifier.pkl
+      hash: md5
+      md5: cd9d9c6997bf5825b74c5cd86c5d2425
+      size: 3498814
+    - path: models/vectorizer.pkl
+      hash: md5
+      md5: 6dc0f19e101ff547733af3677dc701f5
+      size: 182718
+  model_evaluation:
+    cmd: python -m src.evaluation
+    deps:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 4ab8cca8cea730ab645deeb487c81b2c
+      size: 679129
+    - path: models/classifier.pkl
+      hash: md5
+      md5: cd9d9c6997bf5825b74c5cd86c5d2425
+      size: 3498814
+    - path: models/vectorizer.pkl
+      hash: md5
+      md5: 6dc0f19e101ff547733af3677dc701f5
+      size: 182718
+    - path: src/evaluation.py
+      hash: md5
+      md5: 071af2175336c037fd361095112fa013
+      size: 5068
+    params:
+      params.yaml:
+        evaluation:
+          train_vec_path: models/train_vec_data.pkl
+        mlflow:
+          tracking_uri: ./mlruns
+          experiment_name: exp1-arv-testing
+    outs:
+    - path: mlflow_run_info.json
+      hash: md5
+      md5: 7f747a9414a80abd1dc661ba261a4f7d
+      size: 75

@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    ".dvcignore": "ignore",
+    "dvc.lock": "yaml"
+  }
+}

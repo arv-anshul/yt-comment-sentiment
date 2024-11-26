@@ -1,0 +1,39 @@
+params:
+  - params.yaml
+
+stages:
+  data_ingestion:
+    cmd: python -m src.ingestion
+    deps:
+      - src/ingestion.py
+    params:
+      - dataset
+      - ingestion
+    outs:
+      - ${ingestion.processed_train_path}
+      - ${ingestion.processed_test_path}
+
+  model_building:
+    cmd: python -m src.building
+    deps:
+      - ${ingestion.processed_train_path}
+      - src/building.py
+    params:
+      - building.model
+      - building.vectorizer
+    outs:
+      - ${building.model.path}
+      - ${building.vectorizer.path}
+
+  model_evaluation:
+    cmd: python -m src.evaluation
+    deps:
+      - ${ingestion.processed_test_path}
+      - ${building.model.path}
+      - ${building.vectorizer.path}
+      - src/evaluation.py
+    params:
+      - evaluation
+      - mlflow
+    outs:
+      - mlflow_run_info.json
