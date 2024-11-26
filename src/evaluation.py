@@ -102,6 +102,7 @@ def log_models(model) -> None:
 
     logger.debug("Logging vectorizer as an artifact")
     mlflow.log_artifact(params.building.vectorizer.path)
+    mlflow.log_params(params.building.vectorizer.params)
     mlflow.set_tag("vectorizer_name", params.building.vectorizer.name)
 
 
