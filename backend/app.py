@@ -6,6 +6,7 @@ from io import BytesIO
 from typing import Literal
 
 import mlflow
+import polars as pl
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -14,7 +15,7 @@ from pydantic import BaseModel
 from wordcloud import WordCloud
 
 from backend.utils import getenv, load_model_and_vectorizer
-from src.ingestion import preprocess_text
+from src.ingestion import preprocess_comments
 from src.params import params
 
 MLFLOW_MODEL_NAME = getenv("MLFLOW_MODEL_NAME")
@@ -147,7 +148,14 @@ async def comments_wordcloud(
     sentiment_type: SentimentType | None = None,
     background_color: Literal["white", "black"] = "black",
 ):
-    processed_comments = " ".join(preprocess_text(txt) for txt in comments)
+    processed_comments = (
+        pl.DataFrame({"text": comments})
+        .pipe(preprocess_comments)
+        .get_column("text")
+        .implode()
+        .list.join(" ")
+        .item()
+    )
     wordcloud = WordCloud(
         width=800,
         height=400,
