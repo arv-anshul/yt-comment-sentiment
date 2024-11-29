@@ -22,3 +22,4 @@ arv.*
 **/models/
 **/mlruns/
 mlflow_run_info.json
+.env

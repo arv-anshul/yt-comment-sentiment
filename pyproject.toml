@@ -15,3 +15,10 @@ dependencies = [
 [project.optional-dependencies]
 mlflow = ["mlflow>=2.18.0", "pip>=24.3.1", "seaborn>=0.13.2"]
 dvc = ["dvc>=3.57.0"]
+backend = [
+    "fastapi[standard]>=0.115.5",
+    "wordcloud>=1.9.4",
+]
+
+[tool.ruff]
+src = [".", "src", "backend"]
