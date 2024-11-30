@@ -1,9 +1,10 @@
 import time
 import urllib.parse
+from collections import Counter
 from collections.abc import Callable
 from datetime import datetime
 from io import BytesIO
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import mlflow
 import polars as pl
@@ -18,6 +19,9 @@ from backend.utils import getenv, load_model_and_vectorizer
 from src.ingestion import preprocess_comments
 from src.params import params
 
+if TYPE_CHECKING:
+    import numpy as np
+
 MLFLOW_MODEL_NAME = getenv("MLFLOW_MODEL_NAME")
 MLFLOW_MODEL_VERSION = getenv("MLFLOW_MODEL_VERSION")
 MLFLOW_RUN_ID = getenv("MLFLOW_RUN_ID")
@@ -25,7 +29,6 @@ MLFLOW_RUN_ID = getenv("MLFLOW_RUN_ID")
 SentimentType = Literal["positive", "neutral", "negative"]
 
 mlflow.set_tracking_uri(params.mlflow.tracking_uri)
-model, vectorizer = load_model_and_vectorizer(run_id=MLFLOW_RUN_ID)
 
 app = FastAPI(
     title="YouTube Comment Sentiment Analyser - API",
@@ -91,32 +94,49 @@ class CommentInput(BaseModel):
     timestamp: datetime | None = None
 
 
-class CommentOutput(CommentInput):
-    sentiment: int
+class CommentPrediction(CommentInput):
+    sentiment: Literal[-1, 0, 1]
 
 
-@app.post("/predict")
-async def predict(comments: list[CommentInput]) -> list[CommentOutput]:
-    if not comments:
-        raise HTTPException(400, "No comments provided.")
-
-    comments_trf = vectorizer.transform([i.comment for i in comments]).toarray()
-    sentiments = model.predict(comments_trf)
-    return [
-        CommentOutput(comment=c.comment, timestamp=c.timestamp, sentiment=s)
-        for c, s in zip(comments, sentiments)
-    ]
-
-
-class SentimentCountInput(BaseModel):
+class SentimentCount(BaseModel):
     positive: int
     neutral: int
     negative: int
 
 
+class PredictionOutput(BaseModel):
+    comments: list[CommentPrediction]
+    sentiment_count: SentimentCount
+
+
+@app.post("/predict")
+async def predict(comments: list[CommentInput]) -> PredictionOutput:
+    model, vectorizer = load_model_and_vectorizer(run_id=MLFLOW_RUN_ID)
+    if not comments:
+        raise HTTPException(400, "No comments provided.")
+
+    comments_trf = vectorizer.transform([i.comment for i in comments]).toarray()
+    sentiments: np.ndarray = model.predict(comments_trf)  # type: ignore
+
+    # use Counter class to calc each sentiment count
+    sentiment_count = Counter(sentiments)
+
+    return PredictionOutput(
+        comments=[
+            CommentPrediction(comment=c.comment, timestamp=c.timestamp, sentiment=s)
+            for c, s in zip(comments, sentiments)
+        ],
+        sentiment_count=SentimentCount(
+            positive=sentiment_count.get(1, 0),
+            neutral=sentiment_count.get(0, 0),
+            negative=sentiment_count.get(-1, 0),
+        ),
+    )
+
+
 @app.post("/sentiment-count-plot")
 async def sentiment_count_plot(
-    body: SentimentCountInput,
+    body: SentimentCount,
     text_color: Literal["w", "k"] = "k",
 ):
     data = body.model_dump()
