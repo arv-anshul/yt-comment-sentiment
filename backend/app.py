@@ -73,7 +73,7 @@ async def verify_youtube_url(url: str):
         case "youtu.be", _id:
             video_id = _id.strip("/")
         case "", path if path.startswith("youtu.be/"):
-            video_id = path.strip("youtu.be/")
+            video_id = path.removeprefix("youtu.be/")
         case _:
             content = {
                 "error": "validation error",
@@ -165,7 +165,7 @@ async def sentiment_count_plot(
 @app.post("/comments-wordcloud")
 async def comments_wordcloud(
     comments: list[str],
-    sentiment_type: SentimentType | None = None,
+    sentiment_type: SentimentType | None = None,  # noqa: ARG001
     background_color: Literal["white", "black"] = "black",
 ):
     processed_comments = (
