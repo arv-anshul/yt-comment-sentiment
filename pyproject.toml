@@ -12,6 +12,11 @@ dependencies = [
     "scikit-learn>=1.5.2",
 ]
 
+[dependency-groups]
+dev = [
+    "pre-commit>=4.0.1",
+]
+
 [project.optional-dependencies]
 mlflow = ["mlflow>=2.18.0", "pip>=24.3.1", "seaborn>=0.13.2"]
 dvc = ["dvc>=3.57.0"]
@@ -22,3 +27,58 @@ backend = [
 
 [tool.ruff]
 src = [".", "src", "backend"]
+target-version = "py311"
+show-fixes = true
+
+[tool.ruff.lint]
+extend-select = [
+    "A",
+    "ARG",
+    "B",
+    "BLE",
+    "C4",
+    "C90",
+    "COM",
+    "E",
+    "EM",
+    "F",
+    "FLY",
+    "FURB",
+    "I",
+    "ICN",
+    "INP",
+    "ISC",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "Q",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "SLF",
+    "UP",
+    "W",
+    "YTT",
+]
+extend-ignore = [
+    "B008",
+    "B905",
+    "E501",
+    "E741",
+    "EM101",
+    "EM102",
+    "INP001",
+    "ISC001",
+    "N818",
+    "PGH003",
+    "PLE1142",
+    "PLR0913",
+    "PLR2004",
+    "S101",
+    "S301",
+]
+extend-unfixable = ["B", "F401"]

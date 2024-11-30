@@ -10,7 +10,7 @@ stages:
     params:
       params.yaml:
         dataset:
-          url: 
+          url:
             https://raw.githubusercontent.com/Himanshu-1703/reddit-sentiment-analysis/refs/heads/main/data/reddit.csv
           rename_columns:
             clean_comment: text
