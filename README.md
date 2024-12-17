@@ -8,6 +8,8 @@ This project focuses on building a sentiment analysis system for YouTube comment
 inference endpoint and insights-providing API endpoints. The development process included robust experimentation,
 tracking, and pipeline reproduction (using **MLFlow** and **DVC**).
 
+![diagram](assets/diagram.png)
+
 ### Key Features
 
 - **Inference Endpoint:** Built using the FastAPI framework to classify sentiment of comments.
