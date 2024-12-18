@@ -38,6 +38,16 @@ impacted accuracy:
 | **Machine Learning Models** | ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=fff) ![NLTK](https://img.shields.io/badge/NLTK-3776AB?logo=python&logoColor=fff)                                                                                                                                                                                                                              |
 |       **Project Dev Tools** | ![uv](https://img.shields.io/badge/uv-DE5FE9?logo=uv&logoColor=fff) ![pre-commit](https://img.shields.io/badge/pre--commit-FAB040?logo=precommit&logoColor=fff) ![Ruff](https://img.shields.io/badge/Ruff-D7FF64?logo=ruff&logoColor=fff) ![Zed](https://img.shields.io/badge/Zed-084CCF?logo=zedindustries&logoColor=fff) ![Loguru](https://img.shields.io/badge/Loguru-3776AB?logo=python&logoColor=fff) |
 
+## More to do!
+
+1. [ ] Merge **both classifier model and vectorizer model** which reduce the complexity of loading them using using
+       `MLFLOW_RUN_ID` in [`app.py`](backend/app.py).
+2. [ ] After completing previous step, load model using `MLFLOW_MODEL_URI` env instead of `MLFLOW_RUN_ID` env.
+3. [ ] ⚠️ Try to use `MLproject` file to run ML Pipeline steps instead of [`dvc.yaml`](dvc.yaml) file. _(Only if
+       Possible)_
+   - [ ] Also investigate the use `dvc` here and try to know WHY, WHAT and HOW (part of it).
+4. [ ] Know the clear distinction and involvement between the source code of ML Pipeline, Backend.
+
 ---
 
 > \[!IMPORTANT\]
