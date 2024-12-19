@@ -23,14 +23,12 @@ stages:
       - building.vectorizer
     outs:
       - ${building.model.path}
-      - ${building.vectorizer.path}
 
   model_evaluation:
     cmd: python -m src.evaluation
     deps:
       - ${ingestion.processed_test_path}
       - ${building.model.path}
-      - ${building.vectorizer.path}
       - src/evaluation.py
     params:
       - evaluation

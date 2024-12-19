@@ -14,7 +14,6 @@ building:
   vectorizer:
     module: sklearn.feature_extraction.text
     name: TfidfVectorizer
-    path: models/vectorizer.pkl
     params:
       max_features: 5000
 

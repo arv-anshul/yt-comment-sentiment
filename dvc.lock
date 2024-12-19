@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/ingestion.py
       hash: md5
-      md5: a0982c9104c7c38ac4a7617938fe11e6
-      size: 3119
+      md5: dd08ef77eb841f0bf76cd89e5f5f56bc
+      size: 2501
     params:
       params.yaml:
         dataset:
@@ -26,67 +26,55 @@ stages:
     outs:
     - path: data/processed/test.parquet
       hash: md5
-      md5: 4ab8cca8cea730ab645deeb487c81b2c
-      size: 679129
+      md5: b59e6dbce031d40ae776b7540775d3d2
+      size: 651415
     - path: data/processed/train.parquet
       hash: md5
-      md5: bc7903299fcba93328b62281d5b875cc
-      size: 1982976
+      md5: d0f05f0713cd9c610574593ac8f67d58
+      size: 1966155
   model_building:
     cmd: python -m src.building
     deps:
     - path: data/processed/train.parquet
       hash: md5
-      md5: bc7903299fcba93328b62281d5b875cc
-      size: 1982976
+      md5: d0f05f0713cd9c610574593ac8f67d58
+      size: 1966155
     - path: src/building.py
       hash: md5
-      md5: b478c8af7dad0ed13a97195d6fda71cc
-      size: 2878
+      md5: 80df76a5cab540de8071ae9b21d4ea8d
+      size: 2715
     params:
       params.yaml:
         building.model:
           module: sklearn.ensemble
           name: HistGradientBoostingClassifier
           path: models/classifier.pkl
-          params:
-            learning_rate: 0.5
-            max_depth: 10
-            min_samples_leaf: 20
+          params: {}
         building.vectorizer:
           module: sklearn.feature_extraction.text
           name: TfidfVectorizer
-          path: models/vectorizer.pkl
           params:
             max_features: 5000
     outs:
     - path: models/classifier.pkl
       hash: md5
-      md5: cd9d9c6997bf5825b74c5cd86c5d2425
-      size: 3498814
-    - path: models/vectorizer.pkl
-      hash: md5
-      md5: 6dc0f19e101ff547733af3677dc701f5
-      size: 182718
+      md5: 01f6e1ae5b3bf4de101923743ed3bf10
+      size: 3682212
   model_evaluation:
     cmd: python -m src.evaluation
     deps:
     - path: data/processed/test.parquet
       hash: md5
-      md5: 4ab8cca8cea730ab645deeb487c81b2c
-      size: 679129
+      md5: b59e6dbce031d40ae776b7540775d3d2
+      size: 651415
     - path: models/classifier.pkl
       hash: md5
-      md5: cd9d9c6997bf5825b74c5cd86c5d2425
-      size: 3498814
-    - path: models/vectorizer.pkl
-      hash: md5
-      md5: 6dc0f19e101ff547733af3677dc701f5
-      size: 182718
+      md5: 01f6e1ae5b3bf4de101923743ed3bf10
+      size: 3682212
     - path: src/evaluation.py
       hash: md5
-      md5: 071af2175336c037fd361095112fa013
-      size: 5068
+      md5: 2e92241eb0dac64b8002d0d369bb8995
+      size: 5003
     params:
       params.yaml:
         evaluation:
@@ -97,5 +85,5 @@ stages:
     outs:
     - path: mlflow_run_info.json
       hash: md5
-      md5: 7f747a9414a80abd1dc661ba261a4f7d
+      md5: 8b189988501cbc32acd54b9724377eef
       size: 75
