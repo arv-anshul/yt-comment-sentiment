@@ -4,24 +4,25 @@ dataset:
     clean_comment: text
     category: target
   train_size: 0.75
-  target_labels: [neg, neu, pos]
+  target_labels: { 0: neg, 1: neu, 2: pos }
 
 ingestion:
   processed_train_path: data/processed/train.parquet
   processed_test_path: data/processed/test.parquet
 
-building:
-  vectorizer:
-    module: sklearn.feature_extraction.text
-    name: TfidfVectorizer
-    params:
-      max_features: 5000
+vectorizer:
+  module: sklearn.feature_extraction.text
+  name: TfidfVectorizer
+  params:
+    max_features: 5000
 
-  model:
-    module: sklearn.ensemble
-    name: HistGradientBoostingClassifier
-    path: models/classifier.pkl
-    params: {}
+model:
+  module: sklearn.ensemble
+  name: HistGradientBoostingClassifier
+  params: {}
+
+pipeline:
+  path: models/classifier.pkl
 
 evaluation:
   train_vec_path: models/train_vec_data.pkl

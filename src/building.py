@@ -16,21 +16,23 @@ from src.params import params
 
 def build_pipeline() -> Pipeline:
     # import vectorizer class
-    vec_params = params.building.vectorizer
-    module = importlib.import_module(vec_params.module)
-    _params: dict[str, Any] = vec_params.params.copy()
+    module = importlib.import_module(params.vectorizer.module)
+    _params: dict[str, Any] = params.vectorizer.params.copy()
     ngram_range = tuple(_params.pop("ngram_range", [1, 1]))
-    vectorizer = getattr(module, vec_params.name)(
+    vectorizer = getattr(module, params.vectorizer.name)(
         ngram_range=ngram_range,
         **_params,
     )
-    logger.debug("{} imported from {} module.", vec_params.name, vec_params.module)
+    logger.debug(
+        "{} imported from {} module.",
+        params.vectorizer.name,
+        params.vectorizer.module,
+    )
 
     # import model class
-    model_params = params.building.model
-    module = importlib.import_module(model_params.module)
-    model = getattr(module, model_params.name)(**model_params.params)
-    logger.debug("{} imported from {} module.", model_params.name, model_params.module)
+    module = importlib.import_module(params.model.module)
+    model = getattr(module, params.model.name)(**params.model.params)
+    logger.debug("{} imported from {} module.", params.model.name, params.model.module)
 
     # convert sparse output of vectorizer into dense array
     to_dense = FunctionTransformer(
@@ -55,18 +57,16 @@ def train_pipeline(
     x_train: pl.Series,
     y_train: pl.Series,
 ) -> None:
-    model_params = params.building.model
-
     # train model
     pipeline.fit(x_train, y_train)
     logger.debug("Pipeline is trained on x_train data.")
 
     # store model
-    _model_path = Path(model_params.path)
+    _model_path = Path(params.pipeline.path)
     _model_path.parent.mkdir(parents=True, exist_ok=True)
     with _model_path.open("wb") as f:
         cloudpickle.dump(pipeline, f)
-    logger.debug("Pipeline is stored at {!r}.", model_params.path)
+    logger.debug("Pipeline is stored at {!r}.", params.pipeline.path)
 
 
 def main() -> None:

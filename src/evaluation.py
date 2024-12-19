@@ -34,7 +34,7 @@ def evaluate(
         y_test,
         y_pred,
         output_dict=True,
-        target_names=params.dataset.target_labels,
+        target_names=params.dataset.target_labels.values(),
     )  # type: ignore
     logger.debug("Calculating confusion_matrix...")
     cm = confusion_matrix(y_test, y_pred)
@@ -49,6 +49,8 @@ def log_confusion_matrix(
     """Log confusion matrix as an artifact."""
     logger.info("Logging confusion_matrix as an artifact...")
 
+    labels = params.dataset.target_labels.values()
+
     plt.figure(figsize=(8, 6))
     sns.heatmap(
         cm,
@@ -56,8 +58,8 @@ def log_confusion_matrix(
         fmt="d",
         cmap="Blues",
         cbar=False,
-        xticklabels=params.dataset.target_labels,
-        yticklabels=params.dataset.target_labels,
+        xticklabels=labels,
+        yticklabels=labels,
     )
     plt.title(f"Confusion Matrix for {dataset_type} dataset")
     plt.xlabel("Predicted")
@@ -82,7 +84,7 @@ def log_classification_report(
 ) -> None:
     logger.info("Logging classification_report...")
     for label, metrics in report.items():
-        if label in params.dataset.target_labels:
+        if label in params.dataset.target_labels.values():
             mlflow.log_metrics(
                 {
                     f"{dataset_type}_{label}_precision": metrics["precision"],
@@ -98,12 +100,12 @@ def log_models(model) -> None:
     logger.debug("Logging model with mlflow")
     # TODO: learn and implement/use infer_signature() function
     mlflow.sklearn.log_model(model, "model")
-    mlflow.set_tag("model_name", params.building.model.name)
-    mlflow.log_params(params.building.model.params)
+    mlflow.set_tag("model_name", params.model.name)
+    mlflow.log_params(params.model.params)
 
     logger.debug("Logging vectorizer name and params")
-    mlflow.log_params(params.building.vectorizer.params)
-    mlflow.set_tag("vectorizer_name", params.building.vectorizer.name)
+    mlflow.log_params(params.vectorizer.params)
+    mlflow.set_tag("vectorizer_name", params.vectorizer.name)
 
 
 def store_mllfow_run_info(run: mlflow.ActiveRun) -> None:
@@ -138,8 +140,8 @@ def main() -> None:
     logger.critical("Model evaluation starts...")
     start_time = time.perf_counter()
 
-    logger.debug("Loading pipeline from {!r}.", params.building.model.path)
-    with Path(params.building.model.path).open("rb") as f:
+    logger.debug("Loading pipeline from {!r}.", params.pipeline.path)
+    with Path(params.pipeline.path).open("rb") as f:
         pipeline = cloudpickle.load(f)
 
     logger.debug(
