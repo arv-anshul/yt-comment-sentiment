@@ -6,6 +6,7 @@ from datetime import datetime
 from io import BytesIO
 from typing import Literal
 
+import matplotlib as mpl
 import mlflow
 import polars as pl
 from fastapi import FastAPI, HTTPException, Request
@@ -25,7 +26,9 @@ MLFLOW_RUN_ID = getenv("MLFLOW_RUN_ID")
 
 SentimentType = Literal["positive", "neutral", "negative"]
 
+mpl.use("Agg")  # Use a non-GUI backend for rendering plots
 mlflow.set_tracking_uri(params.mlflow.tracking_uri)
+
 
 app = FastAPI(
     title="YouTube Comment Sentiment Analyser - API",

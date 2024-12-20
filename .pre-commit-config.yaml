@@ -11,3 +11,13 @@ repos:
       - id: ruff
         args: [--fix, --unsafe-fixes]
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: ./.venv/bin/pytest
+        args: ["--maxfail=1", "-q"]
+        language: system
+        types: [python]
+        always_run: true
+        pass_filenames: false
