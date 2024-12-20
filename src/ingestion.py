@@ -7,14 +7,13 @@ from loguru import logger
 from src.params import params
 
 
-def preprocess_comments(df: pl.DataFrame) -> pl.DataFrame:
+def preprocess_comments(expr: pl.Expr) -> pl.Expr:
     logger.debug("Applying preprocessing steps on dataset.")
-    return df.with_columns(
-        pl.col("text")
-        .str.to_lowercase()
+    return (
+        expr.str.to_lowercase()
         .str.strip_chars()
         .str.replace_all(r"\n", " ", literal=True)
-        .str.replace_all(r"[^A-Za-z0-9\s!?.,]", ""),
+        .str.replace_all(r"[^A-Za-z0-9\s!?.,]", "")
     )
 
 
@@ -27,7 +26,9 @@ def ingest_data() -> pl.DataFrame:
 
     df = (
         df.rename(params.dataset.rename_columns)
-        .pipe(preprocess_comments)
+        .with_columns(
+            pl.col("text").pipe(preprocess_comments),
+        )
         .filter(
             pl.col("text").is_in(["", " "]).not_(),
             pl.col("text").str.split(" ").list.len().gt(3),

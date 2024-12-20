@@ -87,7 +87,7 @@ async def verify_youtube_url(url: str):
 
 
 class CommentInput(BaseModel):
-    comment: str
+    text: str
     timestamp: datetime | None = None
 
 
@@ -112,16 +112,17 @@ async def predict(comments: list[CommentInput]) -> PredictionOutput:
     if not comments:
         raise HTTPException(400, "No comments provided.")
 
-    sentiments = pipeline.predict([i.comment for i in comments])
+    comments_df = pl.DataFrame([i.model_dump() for i in comments]).with_columns(
+        sentiment=pl.col("text")
+        .pipe(preprocess_comments)
+        .map_batches(pipeline.predict, pl.UInt8, agg_list=True),
+    )
 
     # use Counter class to calc each sentiment count
-    sentiment_count = Counter(sentiments)
+    sentiment_count = Counter(comments_df["sentiment"])
 
     return PredictionOutput(
-        comments=[
-            CommentPrediction(comment=c.comment, timestamp=c.timestamp, sentiment=s)
-            for c, s in zip(comments, sentiments)
-        ],
+        comments=[CommentPrediction(**i) for i in comments_df.iter_rows(named=True)],
         sentiment_count=SentimentCount(
             positive=sentiment_count.get(1, 0),
             neutral=sentiment_count.get(0, 0),
@@ -166,7 +167,7 @@ async def comments_wordcloud(
 ):
     processed_comments = (
         pl.DataFrame({"text": comments})
-        .pipe(preprocess_comments)
+        .with_columns(pl.col("text").pipe(preprocess_comments))
         .get_column("text")
         .implode()
         .list.join(" ")
