@@ -14,6 +14,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.0.1",
+    "pytest>=8.3.4",
 ]
 
 [project.optional-dependencies]
@@ -81,3 +82,9 @@ extend-ignore = [
     "S301",
 ]
 extend-unfixable = ["B", "F401"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    # filter warnings from mlflow due to pydantic v1
+    "ignore::DeprecationWarning",
+]
