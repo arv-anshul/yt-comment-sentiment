@@ -18,9 +18,7 @@ def getenv(name: str, default: Any = None) -> str:
 
 
 @cache
-def load_model(run_id: str) -> Pipeline:
-    # model_uri = f"models:/{MLFLOW_MODEL_NAME}/{MLFLOW_MODEL_VERSION}"
-    model_uri = f"runs:/{run_id}/model"
+def load_model(model_uri: str) -> Pipeline:
     model = mlflow.sklearn.load_model(model_uri)
     if model is None:
         raise FileNotFoundError("error while importing model from its URI")

@@ -20,9 +20,7 @@ from backend.utils import getenv, load_model
 from src.ingestion import preprocess_comments
 from src.params import params
 
-MLFLOW_MODEL_NAME = getenv("MLFLOW_MODEL_NAME")
-MLFLOW_MODEL_VERSION = getenv("MLFLOW_MODEL_VERSION")
-MLFLOW_RUN_ID = getenv("MLFLOW_RUN_ID")
+MLFLOW_MODEL_URI = getenv("MLFLOW_MODEL_URI")
 
 SentimentType = Literal["positive", "neutral", "negative"]
 
@@ -111,7 +109,7 @@ class PredictionOutput(BaseModel):
 
 @app.post("/predict")
 async def predict(comments: list[CommentInput]) -> PredictionOutput:
-    pipeline = load_model(run_id=MLFLOW_RUN_ID)
+    pipeline = load_model(model_uri=MLFLOW_MODEL_URI)
     if not comments:
         raise HTTPException(400, "No comments provided.")
 
