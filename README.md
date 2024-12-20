@@ -40,7 +40,7 @@ impacted accuracy:
 
 ## More to do!
 
-1. [ ] Merge **both classifier model and vectorizer model** which reduce the complexity of loading them using using
+1. [x] Merge **both classifier model and vectorizer model** which reduce the complexity of loading them using using
        `MLFLOW_RUN_ID` in [`app.py`](backend/app.py).
 2. [ ] After completing previous step, load model using `MLFLOW_MODEL_URI` env instead of `MLFLOW_RUN_ID` env.
 3. [ ] ⚠️ Try to use `MLproject` file to run ML Pipeline steps instead of [`dvc.yaml`](dvc.yaml) file. _(Only if
