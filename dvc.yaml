@@ -19,18 +19,16 @@ stages:
       - ${ingestion.processed_train_path}
       - src/building.py
     params:
-      - building.model
-      - building.vectorizer
+      - model
+      - vectorizer
     outs:
-      - ${building.model.path}
-      - ${building.vectorizer.path}
+      - ${pipeline.path}
 
   model_evaluation:
     cmd: python -m src.evaluation
     deps:
       - ${ingestion.processed_test_path}
-      - ${building.model.path}
-      - ${building.vectorizer.path}
+      - ${pipeline.path}
       - src/evaluation.py
     params:
       - evaluation

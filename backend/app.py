@@ -4,7 +4,7 @@ from collections import Counter
 from collections.abc import Callable
 from datetime import datetime
 from io import BytesIO
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 import mlflow
 import polars as pl
@@ -15,12 +15,9 @@ from matplotlib import pyplot as plt
 from pydantic import BaseModel
 from wordcloud import WordCloud
 
-from backend.utils import getenv, load_model_and_vectorizer
+from backend.utils import getenv, load_model
 from src.ingestion import preprocess_comments
 from src.params import params
-
-if TYPE_CHECKING:
-    import numpy as np
 
 MLFLOW_MODEL_NAME = getenv("MLFLOW_MODEL_NAME")
 MLFLOW_MODEL_VERSION = getenv("MLFLOW_MODEL_VERSION")
@@ -111,12 +108,11 @@ class PredictionOutput(BaseModel):
 
 @app.post("/predict")
 async def predict(comments: list[CommentInput]) -> PredictionOutput:
-    model, vectorizer = load_model_and_vectorizer(run_id=MLFLOW_RUN_ID)
+    pipeline = load_model(run_id=MLFLOW_RUN_ID)
     if not comments:
         raise HTTPException(400, "No comments provided.")
 
-    comments_trf = vectorizer.transform([i.comment for i in comments]).toarray()
-    sentiments: np.ndarray = model.predict(comments_trf)  # type: ignore
+    sentiments = pipeline.predict([i.comment for i in comments])
 
     # use Counter class to calc each sentiment count
     sentiment_count = Counter(sentiments)

@@ -3,82 +3,90 @@ from __future__ import annotations
 import importlib
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-import joblib
+import cloudpickle
 import polars as pl
 from loguru import logger
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer
 
 from src.params import params
 
-if TYPE_CHECKING:
-    import numpy as np
-    from sklearn.feature_extraction.text import TfidfVectorizer
 
-
-def build_vectorizer(x_train: pl.Series) -> np.ndarray:
-    vec_params = params.building.vectorizer
-
+def build_pipeline() -> Pipeline:
     # import vectorizer class
-    module = importlib.import_module(vec_params.module)
-    _params: dict[str, Any] = vec_params.params.copy()
+    module = importlib.import_module(params.vectorizer.module)
+    _params: dict[str, Any] = params.vectorizer.params.copy()
     ngram_range = tuple(_params.pop("ngram_range", [1, 1]))
-    vectorizer: TfidfVectorizer = getattr(module, vec_params.name)(
+    vectorizer = getattr(module, params.vectorizer.name)(
         ngram_range=ngram_range,
         **_params,
     )
-    logger.debug("{} imported from {} module.", vec_params.name, vec_params.module)
-
-    # train vectorizer
-    # transform x_train data
-    x_train_vec = vectorizer.fit_transform(x_train).toarray()  # type: ignore
-    logger.info("Vectorizer applied on x_train ({})", x_train.shape)
-
-    # store transformed x_train_vec (for evaluation)
-    Path(params.evaluation.train_vec_path).parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(x_train_vec, params.evaluation.train_vec_path)
-    logger.debug("Stored x_train_vec at {!r}.", params.evaluation.train_vec_path)
-
-    # store trained vectorizer object
-    Path(vec_params.path).parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(vectorizer, vec_params.path)
-    logger.debug("Vectorizer stored at {!r}.", vec_params.path)
-
-    return x_train_vec
-
-
-def build_model(x_train_vec: np.ndarray, y_train: np.ndarray) -> None:
-    model_params = params.building.model
+    logger.debug(
+        "{} imported from {} module.",
+        params.vectorizer.name,
+        params.vectorizer.module,
+    )
 
     # import model class
-    module = importlib.import_module(model_params.module)
-    model = getattr(module, model_params.name)(**model_params.params)
-    logger.debug("{} imported from {} module.", model_params.name, model_params.module)
+    module = importlib.import_module(params.model.module)
+    model = getattr(module, params.model.name)(**params.model.params)
+    logger.debug("{} imported from {} module.", params.model.name, params.model.module)
 
+    # convert sparse output of vectorizer into dense array
+    to_dense = FunctionTransformer(
+        lambda x: x.toarray(),
+        validate=True,
+        accept_sparse=True,
+    )
+
+    # create pipeline object
+    pipeline = Pipeline(
+        steps=[
+            ("vectorizer", vectorizer),
+            ("to_dense", to_dense),
+            ("model", model),
+        ],
+    )
+    return pipeline
+
+
+def train_pipeline(
+    pipeline: Pipeline,
+    x_train: pl.Series,
+    y_train: pl.Series,
+) -> None:
     # train model
-    model.fit(x_train_vec, y_train)
-    logger.debug("{!r} model is trained on vectorized data.", model_params.name)
+    pipeline.fit(x_train, y_train)
+    logger.debug("Pipeline is trained on x_train data.")
 
     # store model
-    Path(model_params.path).parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(model, model_params.path)
-    logger.debug("Model is stored at {!r}.", model_params.path)
+    _model_path = Path(params.pipeline.path)
+    _model_path.parent.mkdir(parents=True, exist_ok=True)
+    with _model_path.open("wb") as f:
+        cloudpickle.dump(pipeline, f)
+    logger.debug("Pipeline is stored at {!r}.", params.pipeline.path)
 
 
 def main() -> None:
-    logger.info("Initiating model building...")
+    logger.info("Initiating model building stage...")
     start_time = time.perf_counter()
 
     if not Path(params.ingestion.processed_train_path).exists():
         msg = f"{params.ingestion.processed_train_path} path not exists."
         raise FileNotFoundError(msg)
     train_df = pl.read_parquet(params.ingestion.processed_train_path)
+    logger.debug(
+        "Load train data from {!r} file.",
+        params.ingestion.processed_train_path,
+    )
 
-    x_train_vec = build_vectorizer(train_df["text"])
-    build_model(x_train_vec, train_df["target"].to_numpy())
+    pipeline = build_pipeline()
+    train_pipeline(pipeline, train_df["text"], train_df["target"])
 
     logger.info(
-        "Mdoel building ends after {:.3f} seconds.",
+        "Model building stage ends after {:.3f} seconds.",
         time.perf_counter() - start_time,
     )
 
