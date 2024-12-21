@@ -20,6 +20,8 @@ from backend.utils import getenv, load_model
 from src.ingestion import preprocess_comments
 from src.params import params
 
+from .routes import youtube
+
 MLFLOW_MODEL_URI = getenv("MLFLOW_MODEL_URI")
 
 SentimentType = Literal["positive", "neutral", "negative"]
@@ -188,3 +190,6 @@ async def comments_wordcloud(
     io.seek(0)
 
     return StreamingResponse(io, media_type="image/png")
+
+
+app.include_router(youtube.router)
