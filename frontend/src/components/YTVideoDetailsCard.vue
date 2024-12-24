@@ -72,7 +72,7 @@ watchEffect(async () => {
           {{ data.videoDetails.title }}
         </CardTitle>
         <img
-          :src="`https://i.ytimg.com/vi/${props.videoId}/maxresdefault.jpg`"
+          :src="`https://i.ytimg.com/vi/${data.videoDetails.id}/maxresdefault.jpg`"
           class="rounded-sm m-auto"
         />
         <CardDescription class="text-gray-500">
@@ -92,7 +92,7 @@ watchEffect(async () => {
       </CardContent>
       <CardFooter>
         <Button variant="outline" class="w-full" as-child>
-          <a :href="`https://youtu.be/${props.videoId}`">
+          <a :href="`https://youtu.be/${data.videoDetails.id}`">
             View on <YouTubeIcon class="text-red-600" />
           </a>
         </Button>
