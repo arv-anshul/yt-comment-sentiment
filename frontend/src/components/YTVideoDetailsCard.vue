@@ -21,6 +21,47 @@ const data = reactive({
   showDetails: false,
 });
 
+function formatDuration(duration) {
+  const matches = duration.match(
+    /P(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/
+  );
+  if (!matches) {
+    return "N/A";
+  }
+
+  const days = matches[1] ? parseInt(matches[1]) : 0;
+  const hours = matches[2] ? parseInt(matches[2]) : 0;
+  const minutes = matches[3] ? parseInt(matches[3]) : 0;
+  const seconds = matches[4] ? parseInt(matches[4]) : 0;
+
+  let result = "";
+
+  if (days > 0) {
+    result += `${days}d `;
+  }
+  if (hours > 0 || days > 0) {
+    result += `${hours}h `;
+  }
+  if (minutes > 0 || hours > 0 || days > 0) {
+    result += `${minutes}m `;
+  }
+  result += `${seconds}s`;
+
+  return result.trim();
+}
+
+function formatPublishedAt(publishedAt) {
+  const date = new Date(publishedAt);
+  if (isNaN(date)) {
+    return "N/A";
+  }
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+}
+
 // Fetches data from API using videoId every time videoId changes
 watchEffect(async () => {
   console.log("Fecthing videos details...");
@@ -80,14 +121,20 @@ watchEffect(async () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <!-- @todo: Add every details in beautiful way -->
-        <p>
-          <span class="font-bold">Published On:</span>
-          {{ data.videoDetails.publishedAt }}
+        <p class="flex gap-2 justify-center place-items-center">
+          <i class="pi pi-eye" title="View Count"></i>
+          {{ data.videoDetails.viewCount }}
+          <i class="pi pi-thumbs-up" title="Like Count"></i>
+          {{ data.videoDetails.likeCount }}
+          <i class="pi pi-comment" title="Comment Count"></i>
+          {{ data.videoDetails.commentCount }}
         </p>
-        <p>
-          <span class="font-bold">Duration:</span>
-          {{ data.videoDetails.duration }}
+        <div class="my-3"></div>
+        <p class="flex gap-2 justify-center place-items-center">
+          <i class="pi pi-calendar" title="Video Published At"></i>
+          {{ formatPublishedAt(data.videoDetails.publishedAt) }}
+          <i class="pi pi-clock" title="Video Duration"></i>
+          {{ formatDuration(data.videoDetails.duration) }}
         </p>
       </CardContent>
       <CardFooter>
