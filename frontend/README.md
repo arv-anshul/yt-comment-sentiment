@@ -31,7 +31,7 @@ pnpm build
 
 ## More to do!
 
-- [ ] Show all video details beautifully.
-  - [ ] Format `publishedAt` field.
-  - [ ] Format `duration` field.
-- [ ] Integrate endpoint to show pie chart. (🤖 try with dummy data).
+- [x] Show all video details beautifully.
+  - [x] Format `publishedAt` field.
+  - [x] Format `duration` field.
+- [x] Integrate endpoint to show pie chart. (🤖 try with dummy data).
