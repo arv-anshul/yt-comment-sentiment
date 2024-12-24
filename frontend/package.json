@@ -14,6 +14,7 @@
     "@vueuse/core": "^12.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "primeicons": "^7.0.0",
     "radix-vue": "^1.9.11",
     "shadcn-vue": "^0.11.3",
     "tailwind-merge": "^2.5.5",
