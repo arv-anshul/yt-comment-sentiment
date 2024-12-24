@@ -19,10 +19,21 @@ const mainData = reactive({
   <div
     class="m-auto my-5 w-3/4 max-w-5xl place-items-center place-content-center"
   >
-    <h1 class="text-3xl font-bold text-center mb-5">
-      YouTube Comment Sentiment <br />
-      <span class="text-red-500 text-base">Analysis Dashboard</span>
-    </h1>
+    <div class="text-3xl font-bold text-center mb-5">
+      <h1 class="">YouTube Comment Sentiment</h1>
+      <p class="text-base text-gray-500">
+        <span class="text-red-500">Analysis Dashboard</span> |
+        <span class="text-blue-500">
+          <a
+            class="hover:underline font-mono"
+            href="https://github.com/arv-anshul"
+            title="Go to GitHub Profile"
+          >
+            @arv-anshul
+          </a>
+        </span>
+      </p>
+    </div>
 
     <VideoUrlInputForm
       @formSubmitted="(data) => (mainData.videoId = data)"
