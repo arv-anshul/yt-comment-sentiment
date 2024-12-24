@@ -11,7 +11,7 @@ from loguru import logger
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
-from src.params import params
+from ml.params import params
 
 
 def build_pipeline() -> Pipeline:

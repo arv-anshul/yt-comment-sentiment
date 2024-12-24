@@ -4,7 +4,7 @@ from pathlib import Path
 import polars as pl
 from loguru import logger
 
-from src.params import params
+from ml.params import params
 
 
 def preprocess_comments(expr: pl.Expr) -> pl.Expr:

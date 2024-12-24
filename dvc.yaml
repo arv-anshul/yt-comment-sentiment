@@ -3,9 +3,9 @@ params:
 
 stages:
   data_ingestion:
-    cmd: python -m src.ingestion
+    cmd: python -m ml.comment_sentiment.ingestion
     deps:
-      - src/ingestion.py
+      - ml/comment_sentiment/ingestion.py
     params:
       - dataset
       - ingestion
@@ -14,10 +14,10 @@ stages:
       - ${ingestion.processed_test_path}
 
   model_building:
-    cmd: python -m src.building
+    cmd: python -m ml.comment_sentiment.building
     deps:
       - ${ingestion.processed_train_path}
-      - src/building.py
+      - ml/comment_sentiment/building.py
     params:
       - model
       - vectorizer
@@ -25,11 +25,11 @@ stages:
       - ${pipeline.path}
 
   model_evaluation:
-    cmd: python -m src.evaluation
+    cmd: python -m ml.comment_sentiment.evaluation
     deps:
       - ${ingestion.processed_test_path}
       - ${pipeline.path}
-      - src/evaluation.py
+      - ml/comment_sentiment/evaluation.py
     params:
       - evaluation
       - mlflow
