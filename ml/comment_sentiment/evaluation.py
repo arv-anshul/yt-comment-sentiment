@@ -15,7 +15,7 @@ from loguru import logger
 from matplotlib import pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 
-from src.params import params
+from ml.params import params
 
 if TYPE_CHECKING:
     import numpy as np

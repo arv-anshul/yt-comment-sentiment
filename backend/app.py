@@ -16,11 +16,11 @@ from matplotlib import pyplot as plt
 from pydantic import BaseModel
 from wordcloud import WordCloud
 
-from backend.utils import getenv, load_model
-from src.ingestion import preprocess_comments
-from src.params import params
+from ml.comment_sentiment.ingestion import preprocess_comments
+from ml.params import params
 
 from .routes import youtube
+from .utils import getenv, load_model
 
 MLFLOW_MODEL_URI = getenv("MLFLOW_MODEL_URI")
 
