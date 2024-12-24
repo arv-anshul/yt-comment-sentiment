@@ -7,6 +7,9 @@ import { ref } from "vue";
 
 const { toast } = useToast();
 const emit = defineEmits(["formSubmitted"]);
+const props = defineProps({
+  class: { type: String, require: false },
+});
 const videoUrl = ref(null);
 
 async function handleSubmit() {
@@ -16,7 +19,7 @@ async function handleSubmit() {
     console.log(data);
 
     if (response.ok) {
-      emit("formSubmitted", data); // Emitting formSubmitted event
+      emit("formSubmitted", data.video_id); // Emitting formSubmitted event
       toast({
         title: "Yay!",
         description: "🤗 Ee na hua baat...",
@@ -40,9 +43,9 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <section class="w-1/2">
+  <div :class="props.class">
     <form
-      class="rounded-xl border bg-card text-card-foreground shadow p-5 mb-5 text-center"
+      class="rounded-xl border bg-card text-card-foreground shadow p-5 text-center"
       @submit.prevent="handleSubmit"
     >
       <FormField name="videoUrl">
@@ -60,5 +63,5 @@ async function handleSubmit() {
         </FormItem>
       </FormField>
     </form>
-  </section>
+  </div>
 </template>

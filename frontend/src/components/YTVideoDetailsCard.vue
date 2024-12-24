@@ -14,8 +14,10 @@ import { YouTubeIcon } from "vue3-simple-icons";
 
 const props = defineProps({
   videoId: { type: String, require: true },
+  class: { type: String, require: false },
 });
 const { toast } = useToast();
+const emit = defineEmits(["submitVideoDetails"]);
 const data = reactive({
   videoDetails: null,
   showDetails: false,
@@ -80,6 +82,7 @@ watchEffect(async () => {
     if (response.ok) {
       data.videoDetails = resData;
       data.showDetails = true;
+      emit("submitVideoDetails", resData);
 
       toast({
         title: "Fetched video details!",
@@ -106,44 +109,42 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <section v-if="data.showDetails">
-    <Card class="min-w-40 max-w-96">
-      <CardHeader class="text-center">
-        <CardTitle class="font-bold">
-          {{ data.videoDetails.title }}
-        </CardTitle>
-        <img
-          :src="`https://i.ytimg.com/vi/${data.videoDetails.id}/maxresdefault.jpg`"
-          class="rounded-sm m-auto"
-        />
-        <CardDescription class="text-gray-500">
-          By {{ data.videoDetails.channelTitle }}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p class="flex gap-2 justify-center place-items-center">
-          <i class="pi pi-eye" title="View Count"></i>
-          {{ data.videoDetails.viewCount }}
-          <i class="pi pi-thumbs-up" title="Like Count"></i>
-          {{ data.videoDetails.likeCount }}
-          <i class="pi pi-comment" title="Comment Count"></i>
-          {{ data.videoDetails.commentCount }}
-        </p>
-        <div class="my-3"></div>
-        <p class="flex gap-2 justify-center place-items-center">
-          <i class="pi pi-calendar" title="Video Published At"></i>
-          {{ formatPublishedAt(data.videoDetails.publishedAt) }}
-          <i class="pi pi-clock" title="Video Duration"></i>
-          {{ formatDuration(data.videoDetails.duration) }}
-        </p>
-      </CardContent>
-      <CardFooter>
-        <Button variant="outline" class="w-full" as-child>
-          <a :href="`https://youtu.be/${data.videoDetails.id}`">
-            View on <YouTubeIcon class="text-red-600" />
-          </a>
-        </Button>
-      </CardFooter>
-    </Card>
-  </section>
+  <Card :class="props.class" v-if="data.showDetails">
+    <CardHeader class="text-center">
+      <CardTitle class="font-bold">
+        {{ data.videoDetails.title }}
+      </CardTitle>
+      <img
+        :src="`https://i.ytimg.com/vi/${data.videoDetails.id}/maxresdefault.jpg`"
+        class="rounded-lg m-auto"
+      />
+      <CardDescription class="text-gray-500">
+        By {{ data.videoDetails.channelTitle }}
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p class="flex gap-2 justify-center place-items-center">
+        <i class="pi pi-eye" title="View Count"></i>
+        {{ data.videoDetails.viewCount }}
+        <i class="pi pi-thumbs-up" title="Like Count"></i>
+        {{ data.videoDetails.likeCount }}
+        <i class="pi pi-comment" title="Comment Count"></i>
+        {{ data.videoDetails.commentCount }}
+      </p>
+      <div class="my-3"></div>
+      <p class="flex gap-2 justify-center place-items-center">
+        <i class="pi pi-calendar" title="Video Published At"></i>
+        {{ formatPublishedAt(data.videoDetails.publishedAt) }}
+        <i class="pi pi-clock" title="Video Duration"></i>
+        {{ formatDuration(data.videoDetails.duration) }}
+      </p>
+    </CardContent>
+    <CardFooter>
+      <Button variant="outline" class="w-full" as-child>
+        <a :href="`https://youtu.be/${data.videoDetails.id}`">
+          View on <YouTubeIcon class="text-red-600" />
+        </a>
+      </Button>
+    </CardFooter>
+  </Card>
 </template>
