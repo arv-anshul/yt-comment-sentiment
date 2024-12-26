@@ -9,13 +9,6 @@ export default defineConfig({
   server: {
     port: 3000,
     strictPort: true,
-    proxy: {
-      "/api": {
-        target: "http://localhost:8000", // Backend api base url
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
   },
   plugins: [vue(), vueDevTools()],
   resolve: {

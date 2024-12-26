@@ -68,7 +68,7 @@ function formatPublishedAt(publishedAt) {
 watchEffect(async () => {
   console.log("Fecthing videos details...");
   const response = await fetch(
-    `/api/youtube/video-details?video_id=${props.videoId}`,
+    `${import.meta.env.VITE_API_URL}/youtube/video-details?video_id=${props.videoId}`,
     {
       headers: {
         "X-API-KEY": import.meta.env.VITE_YOUTUBE_API_KEY,

@@ -8,7 +8,7 @@ export async function getVideoComments(
 ) {
   try {
     const response = await fetch(
-      `/api/youtube/video-comments?video_id=${videoId}&max_comments=${maxComments}&order=${order}`,
+      `${import.meta.env.VITE_API_URL}/youtube/video-comments?video_id=${videoId}&max_comments=${maxComments}&order=${order}`,
       {
         headers: {
           "X-API-KEY": import.meta.env.VITE_YOUTUBE_API_KEY,
@@ -32,7 +32,7 @@ export async function getVideoComments(
  */
 export async function predictCommentsSentiments(comments) {
   try {
-    const response = await fetch("/api/predict", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/predict`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

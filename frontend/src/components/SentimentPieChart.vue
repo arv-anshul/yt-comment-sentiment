@@ -18,13 +18,16 @@ const pieChartUrl = ref(null);
 
 watchEffect(async () => {
   try {
-    const response = await fetch("/api/sentiment-count-plot", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(props.sentimentCount),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/sentiment-count-plot`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(props.sentimentCount),
+      }
+    );
 
     if (response.ok) {
       const imgBlob = await response.blob();
