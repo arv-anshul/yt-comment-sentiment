@@ -1,0 +1,14 @@
+# Ignore all files and folders
+*
+
+# Sync only specified one
+!.env
+!components.json
+!index.html
+!jsconfig.json
+!package.json
+!pnpm-lock.yaml
+!postcss.config.js
+!src/
+!tailwind.config.js
+!vite.config.js
