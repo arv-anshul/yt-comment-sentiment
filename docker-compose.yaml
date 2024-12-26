@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    environment:
+      MLFLOW_TRACKING_URI: https://dagshub.com/arv-anshul/yt-comment-sentiment.mlflow
+      MLFLOW_MODEL_URI: models:/tfidf-5000-hgb-model/1
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - 3000:80
+    volumes:
+      # Map the custom Nginx configuration
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
