@@ -68,8 +68,8 @@ stages:
       size: 651415
     - path: ml/comment_sentiment/evaluation.py
       hash: md5
-      md5: e69647d96de7da9b3bb0b71fd950b2ec
-      size: 4980
+      md5: a365f24a1738ac4b01a644642071595e
+      size: 5113
     - path: models/classifier.pkl
       hash: md5
       md5: bc1e6448aa94bb576f3017c5796ed2fe
@@ -84,5 +84,5 @@ stages:
     outs:
     - path: mlflow_run_info.json
       hash: md5
-      md5: 7f21797f00090051c51ab2ac54b45d86
+      md5: 4e8a3b62c18edc0906f89907a2703b1b
       size: 75

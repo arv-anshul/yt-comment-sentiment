@@ -16,7 +16,12 @@ dependencies = [
 dev = ["pre-commit>=4.0.1", "pytest>=8.3.4"]
 
 [project.optional-dependencies]
-training = ["dvc>=3.57.0", "pip>=24.3.1", "seaborn>=0.13.2"]
+training = [
+    "dagshub>=0.4.2",
+    "dvc>=3.57.0",
+    "pip>=24.3.1",
+    "seaborn>=0.13.2",
+]
 backend = ["fastapi[standard]>=0.115.5", "wordcloud>=1.9.4"]
 
 [tool.ruff]
