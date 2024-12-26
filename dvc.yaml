@@ -32,6 +32,5 @@ stages:
       - ml/comment_sentiment/evaluation.py
     params:
       - evaluation
-      - mlflow
     outs:
       - mlflow_run_info.json

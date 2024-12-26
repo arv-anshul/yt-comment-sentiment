@@ -120,17 +120,6 @@ def store_mllfow_run_info(run: mlflow.ActiveRun) -> None:
         json.dump(info, f, indent=2)
 
 
-def setup_mlflow() -> None:
-    logger.info("Setting up mlflow configs...")
-    logger.critical("Mlflow tracking URI is {!r}", MLFLOW_TRACKING_URI.get())
-
-    logger.info(
-        "Following run comes under experiment {!r}.",
-        params.mlflow.experiment_name,
-    )
-    mlflow.set_experiment(params.mlflow.experiment_name)
-
-
 def main() -> None:
     import os
     import time
@@ -160,7 +149,7 @@ def main() -> None:
 
     report, cm = evaluate(pipeline, test_df["text"], test_df["target"])
 
-    setup_mlflow()
+    logger.critical("Mlflow tracking URI is {!r}", MLFLOW_TRACKING_URI.get())
     with mlflow.start_run() as run:
         logger.critical("Started new mlflow run: {!r}", run.info.run_id)
         log_confusion_matrix(cm, "test")

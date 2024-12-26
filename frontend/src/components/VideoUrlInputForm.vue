@@ -14,7 +14,9 @@ const videoUrl = ref(null);
 
 async function handleSubmit() {
   try {
-    const response = await fetch(`/api/validate-yt-url?url=${videoUrl.value}`);
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/validate-yt-url?url=${videoUrl.value}`
+    );
     const data = await response.json();
     console.log(data);
 

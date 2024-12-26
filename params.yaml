@@ -26,9 +26,3 @@ pipeline:
 
 evaluation:
   train_vec_path: models/train_vec_data.pkl
-
-mlflow:
-  # For local run: mlflow will store artifacts in this directory
-  # For cloud run: specify URL below
-  tracking_uri: ./mlruns
-  experiment_name: exp1-arv-testing
