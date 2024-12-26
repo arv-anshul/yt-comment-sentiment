@@ -19,5 +19,5 @@ repos:
         args: ["--maxfail=1", "-q"]
         language: system
         types: [python]
-        # always_run: true  # disable this for now to check whether it is good or not?
         pass_filenames: false
+        stages: [pre-push]
