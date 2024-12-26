@@ -2,6 +2,7 @@ import time
 import urllib.parse
 from collections import Counter
 from collections.abc import Callable
+from contextlib import asynccontextmanager
 from datetime import datetime
 from io import BytesIO
 from typing import Literal
@@ -26,8 +27,17 @@ SentimentType = Literal["positive", "neutral", "negative"]
 
 mpl.use("Agg")  # Use a non-GUI backend for rendering plots
 
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Load model on startup to cache it
+    load_model(model_uri=MLFLOW_MODEL_URI)
+    yield
+
+
 app = FastAPI(
     title="YouTube Comment Sentiment Analyser - API",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
