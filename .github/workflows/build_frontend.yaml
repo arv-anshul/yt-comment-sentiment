@@ -10,6 +10,9 @@ jobs:
   build-and-deploy-frontend:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       # Checkout the code
       - name: Checkout code
