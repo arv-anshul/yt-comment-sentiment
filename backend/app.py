@@ -114,7 +114,7 @@ async def predict(comments: list[CommentInput]) -> PredictionOutput:
     comments_df = pl.DataFrame([i.model_dump() for i in comments]).with_columns(
         sentiment=pl.col("text")
         .pipe(preprocess_comments)
-        .map_batches(pipeline.predict, pl.UInt8, agg_list=True),
+        .map_batches(pipeline.predict, pl.Int8, agg_list=True),
     )
 
     # use Counter class to calc each sentiment count
