@@ -7,7 +7,6 @@ from io import BytesIO
 from typing import Literal
 
 import matplotlib as mpl
-import mlflow
 import polars as pl
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +16,6 @@ from pydantic import BaseModel
 from wordcloud import WordCloud
 
 from ml.comment_sentiment.ingestion import preprocess_comments
-from ml.params import params
 
 from .routes import youtube
 from .utils import getenv, load_model
@@ -27,8 +25,6 @@ MLFLOW_MODEL_URI = getenv("MLFLOW_MODEL_URI")
 SentimentType = Literal["positive", "neutral", "negative"]
 
 mpl.use("Agg")  # Use a non-GUI backend for rendering plots
-mlflow.set_tracking_uri(params.mlflow.tracking_uri)
-
 
 app = FastAPI(
     title="YouTube Comment Sentiment Analyser - API",

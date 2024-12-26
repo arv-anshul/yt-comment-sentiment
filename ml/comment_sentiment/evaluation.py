@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import tempfile
-import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
@@ -13,6 +12,7 @@ import polars as pl
 import seaborn as sns
 from loguru import logger
 from matplotlib import pyplot as plt
+from mlflow.environment_variables import MLFLOW_TRACKING_URI
 from sklearn.metrics import classification_report, confusion_matrix
 
 from ml.params import params
@@ -122,12 +122,7 @@ def store_mllfow_run_info(run: mlflow.ActiveRun) -> None:
 
 def setup_mlflow() -> None:
     logger.info("Setting up mlflow configs...")
-    tracking_uri: str = params.mlflow.tracking_uri
-    # Infer path if tracking_uri is not a url
-    if not tracking_uri.startswith("http"):
-        tracking_uri = Path(tracking_uri).resolve().absolute().as_uri()
-    logger.info("Mlflow tracking URI is {!r}", tracking_uri)
-    mlflow.set_tracking_uri(tracking_uri)
+    logger.critical("Mlflow tracking URI is {!r}", MLFLOW_TRACKING_URI.get())
 
     logger.info(
         "Following run comes under experiment {!r}.",
@@ -137,7 +132,20 @@ def setup_mlflow() -> None:
 
 
 def main() -> None:
+    import os
+    import time
+
+    import dagshub
+
     logger.critical("Model evaluation starts...")
+
+    if _dagshub_init_url := os.getenv("DAGSHUB_INIT_URL"):
+        logger.critical("Initialize DagsHub...")
+        dagshub.init(url=_dagshub_init_url, mlflow=True)  # type: ignore
+    else:
+        logger.critical("Skipping DagsHub initialization assuming a local experiment.")
+        MLFLOW_TRACKING_URI.set(Path("./mlruns").absolute().resolve().as_uri())
+
     start_time = time.perf_counter()
 
     logger.debug("Loading pipeline from {!r}.", params.pipeline.path)
