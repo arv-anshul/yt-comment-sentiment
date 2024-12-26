@@ -1,0 +1,45 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    paths:
+      - .github/workflows/build_frontend.yaml
+      - frontend/**
+
+jobs:
+  build-and-deploy-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      # Install dependencies
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      # Set environment variables for the build
+      - name: Set environment variables
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> ./frontend/.env.production
+          echo "VITE_YOUTUBE_API_URL=${{ secrets.VITE_YOUTUBE_API_URL }}" >> ./frontend/.env.production
+
+      # Build the app
+      - name: Build the app
+        working-directory: ./frontend
+        run: npm run build
+
+      # Deploy to GitHub Pages branch
+      - name: Deploy to GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/dist
